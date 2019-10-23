@@ -18,7 +18,7 @@
                 <v-toolbar-title>Login form</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-form ref="form" v-model="valid" validation>
+                <v-form ref="form" v-model="valid" lazy-validation>
                   <v-text-field
                     label="Email"
                     name="email"
@@ -35,6 +35,7 @@
                     prepend-icon="mdi-lock"
                     type="password"
                     :counter="6"
+                    :rules="passwordRules"
                     v-model="password"
                     required
                   ></v-text-field>
@@ -42,7 +43,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="onSubmit">Login</v-btn>
+                <v-btn color="primary" @click="onSubmit" :disabled="!valid || loading" :loading="loading">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -61,12 +62,31 @@ export default {
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (v && v.length >= 6) || 'Password should be at least 6 symbols',
+            ],
         }
     },
     methods: {
         onSubmit() {
-
+            if (this.$refs.form.validate()) {
+                const user = {
+                    email: this.email,
+                    password: this.password
+                }
+                this.$store.dispatch('loginUser', user)
+                .then(() => {
+                  this.$router.push('/');
+                })
+                .catch(() => {}) 
+            }
         }
+    },
+    computed: {
+      loading() {
+        return this.$store.getters.loading
+      }
     }
 }
 </script>

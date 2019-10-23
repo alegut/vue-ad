@@ -1,18 +1,107 @@
 <template>
-  <v-container>
-      <v-layout row>
-          <v-flex xs12 md6>
-              <h1>Registration</h1>
-          </v-flex>
-      </v-layout>
-  </v-container>
+  <v-container
+        class="fill-height"
+        fluid
+      >
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            sm="8"
+            md="4"
+          >
+            <v-card class="elevation-24">
+              <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Registration form</v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
+                <v-form ref="form" v-model="valid" validation>
+                  <v-text-field
+                    label="Email"
+                    name="email"
+                    prepend-icon="mdi-face"
+                    type="email"
+                    v-model="email"
+                    :rules="emailRules"
+                    required
+                  ></v-text-field>
+
+                  <v-text-field                   
+                    label="Password"
+                    name="password"
+                    prepend-icon="mdi-lock"
+                    type="password"
+                    :counter="6"
+                    :rules="passwordRules"
+                    v-model="password"
+                    required
+                  ></v-text-field>
+
+                  <v-text-field                   
+                    label="Confirm Password"
+                    name="confirm-password"
+                    prepend-icon="mdi-lock"
+                    type="password"
+                    :counter="6"
+                    :rules="confirmPasswordRules"
+                    v-model="confirmPassword"
+                    required
+                  ></v-text-field>
+
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="onSubmit" :disabled="!valid || loading" :loading="loading">Create account</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
 </template>
 
 <script>
 export default {
     data () {
         return {
-            
+            email: '',
+            password: '',
+            confirmPassword: '',
+            valid: false,
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (v && v.length >= 6) || 'Password should be at least 6 symbols',
+            ],
+            confirmPasswordRules: [
+                v => !!v || 'Password is required',
+                v => v === this.password || 'Password should match',
+            ],
+        }
+    },
+    computed: {
+      loading() {
+        return this.$store.getters.loading
+      }
+    },
+    methods: {
+        onSubmit() {
+            if (this.$refs.form.validate()) {
+                const user = {
+                    email: this.email,
+                    password: this.password
+                }
+                this.$store.dispatch('registerUser', user)
+                .then(() => {
+                  this.$router.push('/');
+                })
+                .catch(() => {}) 
+            }
         }
     }
 }

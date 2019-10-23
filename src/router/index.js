@@ -21,8 +21,9 @@ const routes = [
     component: () => import('@/components/Auth/Login.vue')
   },
   {
-    path: '/ad',
+    path: '/ad/:id',
     name: 'ad',
+    props: true,
     component: () => import('@/components/Ads/Ad.vue')
   },
   {

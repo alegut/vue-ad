@@ -17,7 +17,9 @@
     <div>
       <v-app-bar dark color="primary">
       <v-app-bar-nav-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
-      <v-toolbar-title>Ad application</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link to="/" tag="span" class="pointer">Ad Application</router-link>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn text v-for="link in links" :key="link.title" :to="link.url">
@@ -27,22 +29,28 @@
       </v-toolbar-items>
     </v-app-bar>
     </div>
-
-    
-
     <v-content>
-     
         <router-view></router-view>
-     
     </v-content>
     <!-- </v-container> -->
+    <template v-if="error">
+        <v-snackbar
+          :multi-line="true"
+          :timeout="5000"
+          color="error"
+          @input="closeError"
+          :value="true"
+        >
+          {{error}}
+          <v-btn dark text @click="closeError">Close</v-btn>
+        </v-snackbar>
+    </template>
+
   </v-app>
 
 </template>
 
 <script>
-
-
 export default {
   name: 'App', 
   data:() => ({
@@ -55,6 +63,22 @@ export default {
       {title: 'My ads', icon: 'format-list-checkbox', url: '/list'},
     ]
   }),
+  computed: {
+    error() {
+      return this.$store.getters.error
+    }
+  },
+  methods: {
+    closeError() {
+      this.$store.dispatch('clearError')
+    }
+  }
   
 };
 </script>
+
+<style lang="scss">
+  .pointer {
+    cursor: pointer;
+  }
+</style>
