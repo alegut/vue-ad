@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '@/components/Home'
+import AuthGuard from './auth-guard'
 
 Vue.use(VueRouter)
 
@@ -24,22 +25,30 @@ const routes = [
     path: '/ad/:id',
     name: 'ad',
     props: true,
+    // beforeEnter: AuthGuard,
     component: () => import('@/components/Ads/Ad.vue')
   },
   {
     path: '/list',
     name: 'list',
+    beforeEnter: AuthGuard,
     component: () => import('@/components/Ads/AdList.vue')
   },
   {
     path: '/new',
     name: 'new',
+    beforeEnter: AuthGuard,
     component: () => import('@/components/Ads/NewAd.vue')
   },
   {
     path: '/orders',
     name: 'orders',
+    beforeEnter: AuthGuard,
     component: () => import('@/components/User/Orders.vue')
+  },
+  {
+    path: '**',
+    redirect: { name: 'home' }
   },
 ]
 

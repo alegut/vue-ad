@@ -46,7 +46,7 @@
                 <v-layout row>
                     <v-flex xs12 class="pl-2 pr-2">
                         <v-spacer></v-spacer>
-                        <v-btn class="success" @click="createAd" :disabled="!valid">Create ad</v-btn>
+                        <v-btn class="success" @click="createAd" :disabled="!valid || loading" :loading="loading">Create ad</v-btn>
                     </v-flex>
                 </v-layout>
           </v-flex>
@@ -73,10 +73,17 @@ export default {
                     promo: this.promo,
                     imageSrc: 'https://images.ctfassets.net/nj2caiz7hkjw/5SdA2VBLpKUsAeumA2EsMa/537af179a90aba7a0ce3f823d9d69408/form-with-vuejs.jpg'
                 }
-                console.log(ad);
                 this.$store.dispatch('createAd', ad)
-                
+                    .then(() => {
+                        this.$router.push('/list')
+                    })
+                    .catch(() => {})
             }
+        }
+    },
+    computed: {
+        loading() {
+            return this.$store.getters.loading
         }
     }
 }
